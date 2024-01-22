@@ -41,15 +41,14 @@ def subset_by_mask_for_GEFS_files(year):
         else:
             '''Either cf or pf, depending on the file name'''
             var = file_o.split('_')[1] + '_' + file_o.split('_')[2]
-
+            var_location = f'{data_dir}/{var}'
+            
             if file_o.split('_')[-1].split('.')[0] == 'c00':
                 try:
                     grib_o = xr.open_dataset(file_o,filter_by_keys={'dataType': 'cf'})
                     file_nc_name = f"{file_o[:-6]}.nc4"
-                    
-                    var_location = f'{scratch_dir}/{var}'
                     grib_o.to_netcdf(f"{var_location}/{file_nc_name}")
-                    
+
                     #Remap to specific grid
                     os.system(f'cdo -b f32 -remapbil,{mask_file} {var_location}/{file_nc_name} {save_dir}/{file_nc_name}')
                     os.system(f"rm {var_location}/{file_nc_name}")
@@ -61,12 +60,9 @@ def subset_by_mask_for_GEFS_files(year):
                 try:
                     grib_o = xr.open_dataset(file_o,filter_by_keys={'dataType': 'pf'})
                     file_nc_name = f"{file_o[:-6]}.nc4"
-                    
-                    var_location = f'{scratch_dir}/{var}'
                     grib_o.to_netcdf(f"{var_location}/{file_nc_name}")
 
                     os.system(f'cdo -b f32 -remapbil,{mask_file} {var_location}/{file_nc_name} {save_dir}/{file_nc_name}')
-                    #os.system(f'cdo -b F32 copy {save_dir}/{file_nc_name} {save_dir}/{file_nc_name}')
                     os.system(f"rm {var_location}/{file_nc_name}")
                 except EOFError:
                     pass
