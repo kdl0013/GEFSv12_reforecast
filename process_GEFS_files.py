@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
 '''Because all GEFSv12 models are in seperate files for each model, I need to save
-on space. So save grib2 files as a netcdf, convert data to CONUS grid cell,
-compress, and re-send back to home computer.
+on space. So save grib2 files as a netcdf, apply a mask to subset to only a specific region.
 
-Run this on HPC since that is where data is housed
+For this script, it is setup so that you call the variable as an argument when running the 
+python script (e.g., python process_GEFS_files.py "tmax_2m")
 
+Source of data:
 https://noaa-gefs-retrospective.s3.amazonaws.com/Description_of_reforecast_data.pdf
 
 '''
+
 import os
 import datetime as dt
 import numpy as np
@@ -18,12 +20,10 @@ from multiprocessing import Pool
 import sys
 
 # #for Easley cluster
-scratch_dir = '/scratch/kdl0013' #where all directories are stored
-home_dir = '/home/kdl0013/download_process_GEFSv12_0.5grid/GEFSv12'
-mask_dir = '/home/kdl0013/download_process_GEFSv12_0.5grid/Northern_Hemisphere_0.5grid.grd'
+scratch_dir = "" #where all data is currently stored
+home_dir = ""
+mask_dir = "" #requires mask info that is compatible with CDO operators
 
-#Test file
-# file_o = '/home/kdl/Insync/OneDrive/NRT_CPC_Internship/Data/SubX/GEFSv12/raw_ensemble_files/pres$
 
 
 '''Compress file size to send back to home computer'''
