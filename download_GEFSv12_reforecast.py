@@ -9,33 +9,17 @@ import os
 import datetime as dt
 import numpy as np
 
-# #for linux
-# home_dir = '/home/kdl/Insync/OneDrive/NRT_CPC_Internship/Data/SubX'
-# script_dir = '/home/kdl/Insync/OneDrive/NRT_CPC_Internship/Scripts'
-
-#for Easley cluster
-home_dir = '/home/kdl0013/'
-script_dir = '/home/kdl0013/download_process_GEFSv12_0.5grid/download_data_scripts'
-save_dir = '/scratch/kdl0013'
+#Set directory to where data wget download scripts will be saved to
+script_dir = ""
+os.system(f'mkdir -p {script_dir}')
+#Set directory to where the actual data (once downloaded) will be saved to
+save_dir = ""
+os.system(f'mkdir -p {save_dir}')
 
 model = 'GEFSv12'
 
-model_dir = f'{home_dir}/{model}'
-os.system(f'mkdir -p {model_dir}')
-#Works for GMAO GEOSo
-#https://noaa-gefs-retrospective.s3.amazonaws.com/Description_of_reforecast_data.pdf
-#vars_to_download = ['dswrf_sfc','dlwrf_sfc','tmp_2m', 'soilw_bgrnd','apcp_sfc']
 
-#Good to go vars: dswrf, cape, pres
-#vars_to_download = ['uswrf_sfc','ulwrf_sfc']
-#vars_to_download=['tmax_2m','tmin_2m']
-#vars_to_download=['uflx_sfc','vflx_sfc']
-
-vars_to_download=['pwat_eatm']
-
-#vars_to_download=['ugrd_hgt','vgrd_hgt']
-#vars_to_download=['lhtfl_sfc','shtfl_sfc']
-#TODO: investigate for specific humidity to actual vapor pressure https://earthscience.stackexchange.com/questions/2360/how-do-i-convert-specific-humidity-to-relative-humidity
+#vars_to_download=['tmax_2m','tmin_2m','uflx_sfc','vflx_sfc','uswrf_sfc','ulwrf_sfc','pwat_eatm','ugrd_hgt','vgrd_hgt','lhtfl_sfc','shtfl_sfc']
 
 #GEFS long-term (multi-ensemble) forecasts are only initialized on Wednesdays
 start_date = dt.date(2000, 1, 1)
@@ -51,7 +35,6 @@ dates = [start_date + dt.timedelta(days=d) for d in range(0, end_date.toordinal(
 
 #from date time, Wednesday is a 2. (Monday is a 0) https://docs.python.org/3/library/datetime.html#datetime.datetime.weekday
 dates = [i for i in dates if i.weekday() ==2]
-
 
 #%%
 #name of ensemble models
@@ -71,7 +54,8 @@ to change the name of the save file'''
 for v_i, var in enumerate(vars_to_download):
     var_out_dir = (f'{save_dir}/{var}')
     os.system(f'mkdir -p {var_out_dir}')
-    count=0    
+    
+    count=0 #Counter is used to insert "wait" into wget command
     output=[]
     
     for year in range(2000,2020):
@@ -110,6 +94,7 @@ for v_i, var in enumerate(vars_to_download):
                     #GEFSv12
                     command = f"wget -nc --no-proxy -O {var_out_dir}/{out_name_new} {url3} &"
                     command_idx = f"wget -nc --no-proxy -O {var_out_dir}/{out_name_new}.idx {url3}.idx &"
+                    
                     if count % 20 == 0:
                         output.append('wait')
                     
@@ -118,7 +103,6 @@ for v_i, var in enumerate(vars_to_download):
                     output.append(command_idx)
 
     name = f'wget_{model}'
-    output.reverse()
     np.savetxt(f'{script_dir}/{name}_{var}.txt',output, fmt="%s")
     
     os.system(f'mv {script_dir}/{name}_{var}.txt {script_dir}/{name}_{var}.sh')
