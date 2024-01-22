@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 '''Create wget script for GEFSv12 model to setup download of files in parallel.
+This script will save each variable into its own bash file with wget commands 
+that can download 20 files at a time. Then you will need to manually run each script 
+(or set up a new script).
+
 Source:
 https://noaa-gefs-retrospective.s3.amazonaws.com/Description_of_reforecast_data.pdf
 
