@@ -25,6 +25,7 @@ import sys
 data_dir = "" #where all data is currently stored
 mask_file = "" #requires mask info that is compatible with CDO operators
 
+#Make sure to pass the var name in when calling the python script.
 
 def subset_by_mask_for_GEFS_files(year):
     var=sys.argv[1]
