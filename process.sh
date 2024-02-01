@@ -60,8 +60,6 @@ mkdir $process_dir
 
 cd $save/$1
 
-pressure_level=$1
-
 for file in *.grib2; do
     file_name="${file%??????}" #Must remove the last 6 characters in string
     final_out=$process_dir/"${file_name}".nc
