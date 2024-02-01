@@ -6,7 +6,7 @@ module load ncl
 module load cdo
 
 #export NCARG_ROOT=/usr/local
-
+#Set location for cdo operator regridding template. 
 NH_grid=/glade/work/klesinger/FD_RZSM_deep_learning/Data/masks/Northern_Hemisphere_0.5grid.grd
 
 #First create wget scripts 
