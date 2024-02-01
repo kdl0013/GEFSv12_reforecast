@@ -18,10 +18,14 @@ save=/glade/scratch/klesinger/GEFSv12_raw
 
 python3 create_wget_scripts.py $script $save
 
-for file in wget_scripts;do
+#Download the data
+download_data (){
+for file in $script/*;do
 bash $file;
 done
+}
 
+# download_data
 process_hgt_pressure () {
 
 #Now process hgt_pres individually
